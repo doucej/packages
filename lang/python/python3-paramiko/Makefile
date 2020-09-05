@@ -21,7 +21,7 @@ define Package/python3-paramiko
   CATEGORY:=Languages
   TITLE:=python3-paramiko
   URL:=https://github.com/paramiko/paramiko
-#  DEPENDS:=+python3
+  DEPENDS:=+python3-light
   VARIANT:=python3
 endef
 

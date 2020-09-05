@@ -20,7 +20,7 @@ define Package/duplicity
   CATEGORY:=Utilities
   TITLE:=Incremental backup utility
   URL:=http://duplicity.nongnu.org
-  DEPENDS:=+python3 +librsync +libpopt +openssl-util +python3-boto3
+  DEPENDS:=+python3-light +librsync +libpopt +openssl-util +python3-boto3
   VARIANT:=python3
 endef
 
@@ -38,18 +38,18 @@ define PyPackage/duplicity/filespec
 +|$(PYTHON_PKG_DIR)/duplicity
 endef
 
-define Py3Build/Compile
-	@echo check
-	$(if $(Build/Compile/Py3Mod),,@echo Python packaging code not found.; false)
-	@echo build
-	$(call Build/Compile/Py3Mod,., \
-		build --librsync-dir="$(STAGING_DIR)/usr" , \
-	)
-	@echo install
-	$(call Build/Compile/Py3Mod,, \
-		install --prefix="/usr" --root="$(PKG_INSTALL_DIR)", \
-	)
-endef
+# define Py3Build/Compile
+# 	@echo check
+# 	$(if $(Build/Compile/Py3Mod),,@echo Python packaging code not found.; false)
+# 	@echo build
+# 	$(call Build/Compile/Py3Mod,., \
+# 		build --librsync-dir="$(STAGING_DIR)/usr" , \
+# 	)
+# 	@echo install
+# 	$(call Build/Compile/Py3Mod,, \
+# 		install --prefix="/usr" --root="$(PKG_INSTALL_DIR)", \
+# 	)
+# endef
 
 $(eval $(call Py3Package,duplicity))
 $(eval $(call BuildPackage,duplicity))

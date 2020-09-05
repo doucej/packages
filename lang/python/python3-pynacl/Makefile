@@ -27,8 +27,8 @@ define Package/python3-pynacl
   CATEGORY:=Languages
   TITLE:=python3-pynacl
   URL:=https://pypi.org/project/PyNaCl/
-  DEPENDS=+python3-light
-#  DEPENDS:=+python3 +libsodium @!LIBSODIUM_MINIMAL +python3-cffi +python3-six
+#  DEPENDS=+python3-light
+  DEPENDS:=+python3-light +libsodium @!LIBSODIUM_MINIMAL +python3-cffi +python3-six
 #  DEPENDS:=+python3 +libsodium +python3-cffi +python3-six
 #  DEPENDS:=+python3 +libsodium @!LIBSODIUM_MINIMAL
 #  DEPENDS+=+libsodium @!LIBSODIUM_MINIMAL
