@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=glib2
-PKG_VERSION:=2.65.0
-PKG_RELEASE:=3
+PKG_VERSION:=2.66.3
+PKG_RELEASE:=2
 
 PKG_SOURCE:=glib-$(PKG_VERSION).tar.xz
-PKG_SOURCE_URL:=@GNOME/glib/2.65
-PKG_HASH:=b041e63cd0ac1fccb486374022ade040d907aad29b278e27d9e43e9294a6e7a3
+PKG_SOURCE_URL:=@GNOME/glib/2.66
+PKG_HASH:=79f31365a99cb1cc9db028625635d1438890702acde9e2802eae0acebcf7b5b1
 
 PKG_MAINTAINER:=Peter Wagner <tripolar@gmx.at>
 PKG_LICENSE:=LGPL-2.1-or-later
@@ -22,8 +22,9 @@ PKG_CPE_ID:=cpe:/a:gnome:glib
 
 PKG_BUILD_DIR:=$(BUILD_DIR)/glib-$(PKG_VERSION)
 HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/glib-$(PKG_VERSION)
-PKG_BUILD_DEPENDS:=meson/host gettext-full
+PKG_BUILD_DEPENDS:=meson/host gettext-full libiconv/host
 HOST_BUILD_DEPENDS:=meson/host gettext-full/host libiconv/host libffi/host
+PKG_CONFIG_DEPENDS:=CONFIG_BUILD_NLS
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/host-build.mk
@@ -45,9 +46,10 @@ endef
 
 HOST_LDFLAGS += -liconv -Wl,-rpath,$(STAGING_DIR_HOSTPKG)/lib
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections -liconv
+TARGET_LDFLAGS += -Wl,--gc-sections -liconv $(if $(INTL_FULL),-lintl)
 
 COMP_ARGS= \
+	-Ddefault_library=both \
 	-Diconv=external \
 	-Dselinux=disabled \
 	-Dlibmount=disabled \
@@ -67,22 +69,6 @@ COMP_ARGS= \
 
 MESON_HOST_ARGS += $(COMP_ARGS) -Dxattr=false
 MESON_ARGS += $(COMP_ARGS) -Dxattr=true -Db_lto=true
-
-# hack to compile static libraries
-define Build/Compile
-	$(call Build/Compile/Meson)
-	$(call Ninja,-C $(MESON_BUILD_DIR) install,DESTDIR="$(PKG_INSTALL_DIR)")
-	$(call Meson, \
-		--reconfigure \
-		--buildtype plain \
-		--native-file $(PKG_BUILD_DIR)/openwrt-native.txt \
-		--cross-file $(PKG_BUILD_DIR)/openwrt-cross.txt \
-		-Ddefault_library=static \
-		$(MESON_ARGS) \
-		$(MESON_BUILD_DIR) \
-		$(PKG_BUILD_DIR), \
-		$(MESON_VARS))
-endef
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/bin
@@ -111,6 +97,10 @@ define Build/InstallDev
 		$(1)/usr/lib/
 
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig
+ifneq ($(INTL_FULL),)
+	$(SED) '/^Libs:/s/$$$$/ -lintl/' \
+		$(PKG_INSTALL_DIR)/usr/lib/pkgconfig/glib-2.0.pc
+endif
 	$(INSTALL_DATA) \
 		$(PKG_INSTALL_DIR)/usr/lib/pkgconfig/*.pc \
 		$(1)/usr/lib/pkgconfig

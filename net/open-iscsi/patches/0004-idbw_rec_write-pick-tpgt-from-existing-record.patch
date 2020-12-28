@@ -11,8 +11,6 @@ updated new style record instead.
  usr/idbm.c | 40 ++++++++++++++++++++++++++++++++++++++++
  1 file changed, 40 insertions(+)
 
-diff --git a/usr/idbm.c b/usr/idbm.c
-index b6193e7..2208c4a 100644
 --- a/usr/idbm.c
 +++ b/usr/idbm.c
 @@ -28,6 +28,7 @@
@@ -23,7 +21,18 @@ index b6193e7..2208c4a 100644
  #include <sys/stat.h>
  #include <sys/file.h>
  #include <inttypes.h>
-@@ -202,6 +203,8 @@ static struct int_list_tbl {
+@@ -44,6 +45,10 @@
+ #include "fw_context.h"
+ #include "iscsi_err.h"
+ 
++#ifndef GLOB_ONLYDIR
++#define GLOB_ONLYDIR	0x100
++#endif
++
+ #define IDBM_HIDE	0    /* Hide parameter when print. */
+ #define IDBM_SHOW	1    /* Show parameter when print. */
+ #define IDBM_MASKED	2    /* Show "stars" instead of real value when print */
+@@ -203,6 +208,8 @@ static struct int_list_tbl {
  	{ "SHA3-256", AUTH_CHAP_ALG_SHA3_256 },
  };
  
@@ -32,7 +41,7 @@ index b6193e7..2208c4a 100644
  static void
  idbm_recinfo_discovery(discovery_rec_t *r, recinfo_t *ri)
  {
-@@ -2206,12 +2209,49 @@ static int idbm_rec_write_old(node_rec_t *rec)
+@@ -2207,12 +2214,49 @@ static int idbm_rec_write_old(node_rec_t
  	FILE *f;
  	char *portal;
  	int rc = 0;
@@ -82,6 +91,3 @@ index b6193e7..2208c4a 100644
  	snprintf(portal, PATH_MAX, "%s/%s/%s,%d", NODE_CONFIG_DIR,
  		 rec->name, rec->conn[0].address, rec->conn[0].port);
  
--- 
-2.21.1
-

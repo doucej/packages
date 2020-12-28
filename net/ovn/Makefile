@@ -9,13 +9,13 @@ include $(INCLUDE_DIR)/kernel.mk
 include ../openvswitch/openvswitch.mk
 
 PKG_NAME:=ovn
-PKG_VERSION:=20.06.1
-PKG_RELEASE:=3
+PKG_VERSION:=20.09.0
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/ovn-org/ovn.git
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
-PKG_MIRROR_HASH:=046002c271fd29c496be53b5673a7ede6f381343bef49732e9bd17ed1454940e
+PKG_MIRROR_HASH:=38cf4af2c6b7e1b9440e21281c1da4dc5a48d03504b7063bc019b9459aba4a7e
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE
@@ -47,7 +47,7 @@ ovs_ovn-common_depends+=+libatomic
 ovs_ovn-common_files:= \
 	usr/share/ovn/scripts/ovn-ctl \
 	usr/share/ovn/scripts/ovn-lib \
-	$(foreach b,ovn-nbctl ovn-sbctl,usr/bin/$(b))
+	$(foreach b,ovn-appctl ovn-nbctl ovn-sbctl,usr/bin/$(b))
 define ovs_ovn-common_install
 	$$(LN) /usr/share/openvswitch/scripts/ovs-ctl-wrapper $$(1)/usr/bin/ovn-ctl
 endef
