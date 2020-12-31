@@ -10,7 +10,7 @@
 #
 LC_ALL=C
 PATH="/usr/sbin:/usr/bin:/sbin:/bin"
-trm_ver="1.5.4"
+trm_ver="1.5.5"
 trm_enabled=0
 trm_debug=0
 trm_iface="trm_wwan"
@@ -245,7 +245,7 @@ f_check()
 {
 	local IFS ifname radio dev_status result uci_section login_command login_command_args wait_time=1 mode="${1}" status="${2:-"false"}" cp_domain="${3:-"false"}"
 
-	if [ "${mode}" != "initial" ] && [ "${mode}" != "dev" ] && [ "${status}" = "false" ]
+	if [ "${mode}" != "initial" ] && [ "${status}" = "false" ]
 	then
 		"${trm_wifi}" "${trm_wificmd}"
 		sleep $((trm_maxwait/6))
@@ -574,7 +574,7 @@ f_main()
 				f_log "debug" "f_main    ::: sta_radio: ${sta_radio}, sta_essid: \"${sta_essid}\", sta_bssid: ${sta_bssid:-"-"}"
 				if [ -z "${scan_list}" ]
 				then
-					scan_dev="$(ubus -S call network.wireless status 2>/dev/null | jsonfilter -l1 -e "@.${dev}.interfaces[@.config.mode=\"sta\"].ifname")"
+					scan_dev="$(ubus -S call network.wireless status 2>/dev/null | jsonfilter -l1 -e "@.${dev}.interfaces[0].ifname")"
 					scan_list="$("${trm_iwinfo}" "${scan_dev:-${dev}}" scan 2>/dev/null | \
 						awk 'BEGIN{FS="[[:space:]]"}/Address:/{var1=$NF}/ESSID:/{var2="";for(i=12;i<=NF;i++)if(var2==""){var2=$i}else{var2=var2" "$i};
 						gsub(/,/,".",var2)}/Quality:/{split($NF,var0,"/")}/Encryption:/{if($NF=="none"){var3="+"}else{var3="-"};printf "%i,%s,%s,%s\n",(var0[1]*100/var0[2]),var1,var2,var3}' | \
